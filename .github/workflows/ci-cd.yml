@@ -9,6 +9,9 @@ on:
 jobs:
   backend-test-build:
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/medflow_db"
+      JWT_SECRET: "ci-cd-test-secret-key-32-chars-minimum"
     steps:
       - uses: actions/checkout@v4
 
@@ -16,17 +19,21 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: 'npm'
 
       - name: Install Backend Dependencies
         run: |
           cd backend
-          npm ci
+          npm install
 
       - name: Validate Prisma Schema
         run: |
           cd backend
           npx prisma validate
+
+      - name: Generate Prisma Client
+        run: |
+          cd backend
+          npx prisma generate
 
       - name: Build Backend
         run: |
@@ -46,7 +53,7 @@ jobs:
       - name: Install Frontend Dependencies
         run: |
           cd frontend
-          npm ci
+          npm install
 
       - name: Build Frontend
         run: |
