@@ -17,6 +17,7 @@ jobs:
         with:
           node-version: '22'
           cache: 'npm'
+          cache-dependency-path: 'backend/package-lock.json'
 
       - name: Install Backend Dependencies
         run: |
@@ -24,6 +25,8 @@ jobs:
           npm ci
 
       - name: Validate Prisma Schema
+        env:
+          DATABASE_URL: postgresql://localhost:5432/medflow
         run: |
           cd backend
           npx prisma validate
