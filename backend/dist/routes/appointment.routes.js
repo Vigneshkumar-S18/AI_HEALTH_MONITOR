@@ -1,0 +1,14 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const appointment_controller_1 = require("../controllers/appointment.controller");
+const auth_middleware_1 = require("../middlewares/auth.middleware");
+const tenant_middleware_1 = require("../middlewares/tenant.middleware");
+const validate_middleware_1 = require("../middlewares/validate.middleware");
+const validators_1 = require("../validators");
+const router = (0, express_1.Router)();
+router.use(auth_middleware_1.authenticateJWT, tenant_middleware_1.enforceTenantScope);
+router.get('/', appointment_controller_1.AppointmentController.list);
+router.post('/book', (0, validate_middleware_1.validateRequest)(validators_1.appointmentBookingSchema), appointment_controller_1.AppointmentController.book);
+router.patch('/:id/status', appointment_controller_1.AppointmentController.updateStatus);
+exports.default = router;

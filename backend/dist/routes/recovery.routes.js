@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const recovery_controller_1 = require("../controllers/recovery.controller");
+const auth_middleware_1 = require("../middlewares/auth.middleware");
+const tenant_middleware_1 = require("../middlewares/tenant.middleware");
+const router = (0, express_1.Router)();
+router.use(auth_middleware_1.authenticateJWT, tenant_middleware_1.enforceTenantScope);
+router.post('/log', recovery_controller_1.RecoveryController.log);
+router.get('/history/:patientId', recovery_controller_1.RecoveryController.history);
+exports.default = router;

@@ -1,0 +1,15 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const billing_controller_1 = require("../controllers/billing.controller");
+const auth_middleware_1 = require("../middlewares/auth.middleware");
+const tenant_middleware_1 = require("../middlewares/tenant.middleware");
+const validate_middleware_1 = require("../middlewares/validate.middleware");
+const validators_1 = require("../validators");
+const rbac_middleware_1 = require("../middlewares/rbac.middleware");
+const router = (0, express_1.Router)();
+router.use(auth_middleware_1.authenticateJWT, tenant_middleware_1.enforceTenantScope);
+router.get('/invoices', billing_controller_1.BillingController.list);
+router.post('/invoices', (0, rbac_middleware_1.authorizeRoles)('RECEPTIONIST', 'ADMIN'), (0, validate_middleware_1.validateRequest)(validators_1.invoiceSchema), billing_controller_1.BillingController.create);
+router.post('/payments', (0, rbac_middleware_1.authorizeRoles)('RECEPTIONIST', 'ADMIN'), (0, validate_middleware_1.validateRequest)(validators_1.paymentSchema), billing_controller_1.BillingController.recordPayment);
+exports.default = router;

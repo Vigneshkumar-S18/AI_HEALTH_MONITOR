@@ -1,0 +1,13 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const admin_controller_1 = require("../controllers/admin.controller");
+const auth_middleware_1 = require("../middlewares/auth.middleware");
+const tenant_middleware_1 = require("../middlewares/tenant.middleware");
+const rbac_middleware_1 = require("../middlewares/rbac.middleware");
+const router = (0, express_1.Router)();
+router.use(auth_middleware_1.authenticateJWT, tenant_middleware_1.enforceTenantScope);
+router.get('/dashboard', (0, rbac_middleware_1.authorizeRoles)('ADMIN'), admin_controller_1.AdminController.dashboard);
+router.get('/wards', admin_controller_1.AdminController.wards);
+router.get('/audit-logs', (0, rbac_middleware_1.authorizeRoles)('ADMIN'), admin_controller_1.AdminController.auditLogs);
+exports.default = router;

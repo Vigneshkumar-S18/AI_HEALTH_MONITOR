@@ -1,0 +1,15 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const patient_controller_1 = require("../controllers/patient.controller");
+const auth_middleware_1 = require("../middlewares/auth.middleware");
+const tenant_middleware_1 = require("../middlewares/tenant.middleware");
+const validate_middleware_1 = require("../middlewares/validate.middleware");
+const validators_1 = require("../validators");
+const router = (0, express_1.Router)();
+router.use(auth_middleware_1.authenticateJWT, tenant_middleware_1.enforceTenantScope);
+router.get('/', patient_controller_1.PatientController.list);
+router.get('/:id', patient_controller_1.PatientController.getById);
+router.post('/', (0, validate_middleware_1.validateRequest)(validators_1.patientRegistrationSchema), patient_controller_1.PatientController.register);
+router.post('/vitals', (0, validate_middleware_1.validateRequest)(validators_1.vitalsSchema), patient_controller_1.PatientController.recordVitals);
+exports.default = router;

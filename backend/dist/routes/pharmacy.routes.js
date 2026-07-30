@@ -1,0 +1,17 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const pharmacy_controller_1 = require("../controllers/pharmacy.controller");
+const auth_middleware_1 = require("../middlewares/auth.middleware");
+const tenant_middleware_1 = require("../middlewares/tenant.middleware");
+const validate_middleware_1 = require("../middlewares/validate.middleware");
+const validators_1 = require("../validators");
+const rbac_middleware_1 = require("../middlewares/rbac.middleware");
+const router = (0, express_1.Router)();
+router.use(auth_middleware_1.authenticateJWT, tenant_middleware_1.enforceTenantScope);
+router.get('/inventory', pharmacy_controller_1.PharmacyController.listInventory);
+router.post('/inventory', (0, rbac_middleware_1.authorizeRoles)('PHARMACIST', 'ADMIN'), (0, validate_middleware_1.validateRequest)(validators_1.medicineInventorySchema), pharmacy_controller_1.PharmacyController.addMedicine);
+router.get('/prescriptions/pending', (0, rbac_middleware_1.authorizeRoles)('PHARMACIST', 'ADMIN'), pharmacy_controller_1.PharmacyController.pendingPrescriptions);
+router.post('/prescriptions/:id/dispense', (0, rbac_middleware_1.authorizeRoles)('PHARMACIST', 'ADMIN'), pharmacy_controller_1.PharmacyController.dispense);
+router.get('/alerts/low-stock', pharmacy_controller_1.PharmacyController.lowStockAlerts);
+exports.default = router;

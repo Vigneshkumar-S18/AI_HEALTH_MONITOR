@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const commandCenter_controller_1 = require("../controllers/commandCenter.controller");
+const auth_middleware_1 = require("../middlewares/auth.middleware");
+const tenant_middleware_1 = require("../middlewares/tenant.middleware");
+const rbac_middleware_1 = require("../middlewares/rbac.middleware");
+const router = (0, express_1.Router)();
+router.use(auth_middleware_1.authenticateJWT, tenant_middleware_1.enforceTenantScope);
+router.get('/metrics', (0, rbac_middleware_1.authorizeRoles)('ADMIN', 'DOCTOR'), commandCenter_controller_1.CommandCenterController.metrics);
+exports.default = router;

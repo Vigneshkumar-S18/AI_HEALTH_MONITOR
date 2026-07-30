@@ -1,0 +1,16 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const lab_controller_1 = require("../controllers/lab.controller");
+const auth_middleware_1 = require("../middlewares/auth.middleware");
+const tenant_middleware_1 = require("../middlewares/tenant.middleware");
+const validate_middleware_1 = require("../middlewares/validate.middleware");
+const validators_1 = require("../validators");
+const rbac_middleware_1 = require("../middlewares/rbac.middleware");
+const router = (0, express_1.Router)();
+router.use(auth_middleware_1.authenticateJWT, tenant_middleware_1.enforceTenantScope);
+router.get('/tests', lab_controller_1.LabController.listTests);
+router.post('/order', (0, rbac_middleware_1.authorizeRoles)('DOCTOR', 'ADMIN', 'RECEPTIONIST'), lab_controller_1.LabController.orderTest);
+router.get('/orders/pending', (0, rbac_middleware_1.authorizeRoles)('LAB_TECH', 'ADMIN'), lab_controller_1.LabController.pendingOrders);
+router.post('/results', (0, rbac_middleware_1.authorizeRoles)('LAB_TECH', 'ADMIN'), (0, validate_middleware_1.validateRequest)(validators_1.labReportResultSchema), lab_controller_1.LabController.submitResult);
+exports.default = router;
