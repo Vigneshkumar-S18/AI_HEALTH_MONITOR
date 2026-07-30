@@ -1,0 +1,16 @@
+{
+  "client": {
+    "source": "frontend",
+    "build_command": "npm install && npm run build",
+    "output_directory": "dist"
+  },
+  "appsail": [
+    {
+      "name": "medflow-backend",
+      "source": "backend",
+      "stack": "node22",
+      "build_command": "npm install && npx prisma generate && npm run build",
+      "command": "node dist/server.js"
+    }
+  ]
+}
